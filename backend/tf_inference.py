@@ -1,34 +1,66 @@
 import tensorflow as tf
 import numpy as np
-
 from PIL import Image
-
 from object_detection.utils import ops as utils_ops
-from backend.config import id2name
+from object_detection.utils import visualization_utils as vis_util
+from object_detection.utils import label_map_util
+import pathlib
+import os
 
 # patch tf1 into `utils.ops`
 utils_ops.tf = tf.compat.v1
 
-import pathlib
+label_map_path = os.path.join(os.path.dirname(__file__), 'label_map.pbtxt')
 
-# Verify: https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md
+
 def load_model(model_name):
-  base_url = 'http://download.tensorflow.org/models/object_detection/tf2/20200711/'
-  model_file = model_name + '.tar.gz'
-  model_dir = tf.keras.utils.get_file(
-    fname=model_name,
-    origin=base_url + model_file,
-    untar=True)
-  model_dir = pathlib.Path(model_dir)/"saved_model"
-  model = tf.saved_model.load(str(model_dir))
-  return model
+    '''
+    Models: https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md
+    '''
+    base_url = 'http://download.tensorflow.org/models/object_detection/tf2/20200711/'
+    model_file = model_name + '.tar.gz'
+    model_dir = tf.keras.utils.get_file(
+        fname=model_name,
+        origin=base_url + model_file,
+        untar=True)
+    model_dir = pathlib.Path(model_dir)/"saved_model"
+    model = tf.saved_model.load(str(model_dir))
+    return model
 
 
 def load_custom_model(model_name):
-  model_file = model_name
-  model_dir = pathlib.Path(model_file)/"saved_model"
-  model = tf.saved_model.load(str(model_dir))
-  return model
+    model_file = model_name
+    model_dir = pathlib.Path(model_file)/"saved_model"
+    model = tf.saved_model.load(str(model_dir))
+    return model
+
+
+def read_label_map(label_map_path):
+    '''
+    https://stackoverflow.com/questions/55218726/how-to-open-pbtxt-file
+    '''
+    item_id = None
+    item_name = None
+    items = {}
+
+    with open(label_map_path, "r") as file:
+        for line in file:
+            line.replace(" ", "")
+            if line == "item{":
+                pass
+            elif line == "}":
+                pass
+            elif "id" in line:
+                item_id = int(line.split(":", 1)[1].strip())
+            elif "name" in line:
+                item_name = line.split(":", 1)[1].replace("'", "").strip()
+
+            if item_id is not None and item_name is not None:
+                items[item_id] = item_name
+                item_id = None
+                item_name = None
+
+    return items
 
 
 def run_inference_for_single_image(model, image):
@@ -76,6 +108,7 @@ def generate_inference(model, image_np, conf_thresh=0.5):
     output_dict = run_inference_for_single_image(model, image_np)
     # List of the strings that is used to add correct label for each box.
     #category_index = label_map_util.create_category_index_from_labelmap(label_map, use_display_name=True)
+    category_index = read_label_map(label_map_path)
 
     boxes = np.array(output_dict['detection_boxes'])
     classes = np.array(output_dict['detection_classes'])
@@ -88,7 +121,7 @@ def generate_inference(model, image_np, conf_thresh=0.5):
     results = []
     for index, score in enumerate(scores):
         if score > conf_thresh:
-            label = id2name[classes[index]]
+            label = category_index[classes[index]]
             ymin, xmin, ymax, xmax = boxes[index]
 
             ymin, ymax = ymin * height, ymax * height
@@ -100,3 +133,35 @@ def generate_inference(model, image_np, conf_thresh=0.5):
                             })
 
     return {"results": results}
+
+
+def generate_inference_image(model, image_np):
+
+    # the array based representation of the image will be used later in order to prepare the
+    # result image with boxes and labels on it.
+    #image_np = np.array(Image.open(image_path))
+    # Actual detection.
+    output_dict = run_inference_for_single_image(model, image_np)
+
+    boxes = np.array(output_dict['detection_boxes'])
+    classes = np.array(output_dict['detection_classes'])
+    scores = np.array(output_dict['detection_scores'])
+
+    boxes = np.squeeze(boxes)
+    classes = np.squeeze(classes)
+    scores = np.squeeze(scores)
+
+    # List of the strings that is used to add correct label for each box.
+    category_index = label_map_util.create_category_index_from_labelmap(label_map_path, use_display_name=False)
+    # Visualization of the results of a detection.
+    vis_util.visualize_boxes_and_labels_on_image_array(
+        image_np,
+        output_dict['detection_boxes'],
+        output_dict['detection_classes'],
+        output_dict['detection_scores'],
+        category_index,
+        instance_masks=output_dict.get('detection_masks_reframed', None),
+        use_normalized_coordinates=True,
+        line_thickness=2)
+
+    return image_np

@@ -1,0 +1,24 @@
+item {
+    id: 1
+    name: 'esfera_boa'
+}
+item {
+    id: 2
+    name: 'esfera_razoavel'
+}
+item {
+    id: 3
+    name: 'esfera_ruim'
+}
+item {
+    id: 4
+    name: 'isolador_bom'
+}
+item {
+    id: 5
+    name: 'isolador_falha'
+}
+item {
+    id: 6
+    name: 'ninho'
+}
