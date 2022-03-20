@@ -1,24 +1,44 @@
 item {
     id: 1
-    name: 'esfera_boa'
+    name: 'baliser_ok'
 }
 item {
     id: 2
-    name: 'esfera_razoavel'
+    name: 'baliser_aok'
 }
 item {
     id: 3
-    name: 'esfera_ruim'
+    name: 'baliser_nok'
 }
 item {
     id: 4
-    name: 'isolador_bom'
+    name: 'insulator_ok'
 }
 item {
     id: 5
-    name: 'isolador_falha'
+    name: 'insulator_nok'
 }
 item {
     id: 6
-    name: 'ninho'
+    name: 'bird_nest'
+}
+item {
+    id: 7
+    name: 'stockbridge_ok'
+}
+item {
+    id: 8
+    name: 'stockbridge_nok'
+}
+item {
+    id: 9
+    name: 'spacer_ok'
+}
+item {
+    id: 10
+    name: 'spacer_nok'
+}
+item {
+    id: 11
+    name: 'insulator_unk'
 }

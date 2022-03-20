@@ -101,6 +101,27 @@ If you want to build your own docker image, you can modify the Dockerfile and ex
 
 `docker run -p 5000:5000 -p 8000:8000 -d object_detection`
 
+
+## Client
+
+You can use client.py to access the service. In the clinet.py file it is necessary to configure the ip of the server, setting the variable:
+```
+addr = 'http://localhost:5000'
+```
+
+Then just run the following command:
+
+```
+$ python client.py --image_path=IMAGE_FILEPATH --output_path=OUTPUT_FILEPATH --mode=img
+```
+
+In this way, the image will be returned with the annotations provided by the model. Running the following command a json file will be returned containing the annotation predicted by the model:
+
+```
+$ python client.py --image_path=IMAGE_FILEPATH --output_path=OUTPUT_FILEPATH --mode=json
+```
+
+
 ### Demo Results:
 
 ![image_test_1](images/example0.jpg)
