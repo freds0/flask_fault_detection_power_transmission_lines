@@ -1,44 +1,55 @@
 item {
     id: 1
     name: 'baliser_ok'
+    display_name: "esfera_boa"
 }
 item {
     id: 2
     name: 'baliser_aok'
+    display_name: "esfera_razoavel"
 }
 item {
     id: 3
     name: 'baliser_nok'
+    display_name: "esfera_ruim"
 }
 item {
     id: 4
     name: 'insulator_ok'
+    display_name: "isolador_bom"
 }
 item {
     id: 5
     name: 'insulator_nok'
+    display_name: "isolador_ruim"
 }
 item {
     id: 6
     name: 'bird_nest'
+    display_name: "ninho"
 }
 item {
     id: 7
     name: 'stockbridge_ok'
+    display_name: "amortecedor_bom"
 }
 item {
     id: 8
     name: 'stockbridge_nok'
+    display_name: "amortecedor_ruim"
 }
 item {
     id: 9
     name: 'spacer_ok'
+    display_name: "espacador_bom"
 }
 item {
     id: 10
     name: 'spacer_nok'
+    display_name: "espacador_ruim"
 }
 item {
     id: 11
     name: 'insulator_unk'
+    display_name: "isolador_nao_visivel"
 }

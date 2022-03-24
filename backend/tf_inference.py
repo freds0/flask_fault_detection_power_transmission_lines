@@ -65,7 +65,6 @@ def read_label_map(label_map_path):
 
 def run_inference_for_single_image(model, image):
     image = np.asarray(image)
-    print()
     # The input needs to be a tensor, convert it using `tf.convert_to_tensor`.
     input_tensor = tf.convert_to_tensor(image)
     # The model expects a batch of images, so add an axis with `tf.newaxis`.
@@ -107,8 +106,8 @@ def generate_inference(model, image_np, conf_thresh=0.5):
     # Actual detection.
     output_dict = run_inference_for_single_image(model, image_np)
     # List of the strings that is used to add correct label for each box.
-    #category_index = label_map_util.create_category_index_from_labelmap(label_map, use_display_name=True)
-    category_index = read_label_map(label_map_path)
+    category_index = label_map_util.create_category_index_from_labelmap(label_map_path, use_display_name=True)
+    #category_index = read_label_map(label_map_path)
 
     boxes = np.array(output_dict['detection_boxes'])
     classes = np.array(output_dict['detection_classes'])
@@ -121,7 +120,7 @@ def generate_inference(model, image_np, conf_thresh=0.5):
     results = []
     for index, score in enumerate(scores):
         if score > conf_thresh:
-            label = category_index[classes[index]]
+            label = category_index[classes[index]]['name']
             ymin, xmin, ymax, xmax = boxes[index]
 
             ymin, ymax = ymin * height, ymax * height
@@ -152,7 +151,7 @@ def generate_inference_image(model, image_np):
     scores = np.squeeze(scores)
 
     # List of the strings that is used to add correct label for each box.
-    category_index = label_map_util.create_category_index_from_labelmap(label_map_path, use_display_name=False)
+    category_index = label_map_util.create_category_index_from_labelmap(label_map_path, use_display_name=True)
     # Visualization of the results of a detection.
     vis_util.visualize_boxes_and_labels_on_image_array(
         image_np,
