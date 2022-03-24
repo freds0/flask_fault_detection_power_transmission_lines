@@ -122,7 +122,7 @@ function drawResult(results) {
       score = bboxInfo['conf'];
 
       ctx.beginPath();
-      ctx.lineWidth="4";
+      ctx.lineWidth="2";
 
       ctx.strokeStyle="red";
       ctx.fillStyle="red";
@@ -130,7 +130,7 @@ function drawResult(results) {
       ctx.rect(bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]);
       ctx.stroke();
       
-      ctx.font="30px Arial";
+      ctx.font="20px Arial";
       
       let content = class_name + " " + parseFloat(score).toFixed(2);
       ctx.fillText(content, bbox[0], bbox[1] < 20 ? bbox[1] + 30 : bbox[1]-5);
